@@ -17,6 +17,8 @@ Klasa Telewizjada zawiera dodatkowo dwa settery, które można ustawić w pliku 
 
     $telewizjada->setOnlineOnly(true) - Do listy dodawane są wyłącznie kanały, które nadają w danej chwili (domyślnie: false)
 
+    $telewizjada->setAdultVisible(true) - Do listy dodawane są kanały erotyczne(domyślnie: false)
+
 # UWAGA
 
 Pliki muszą być ciągle dostępne na serwrze, gdyż pośredniczą one w odtwarzaniu kanałów tv.

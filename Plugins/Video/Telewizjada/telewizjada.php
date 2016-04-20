@@ -28,12 +28,6 @@ class Telewizjada
     private $webUrl;
 
     /**
-     * Filter channels
-     * @var bool
-     */
-    private $onlineOnly = false;
-
-    /**
      * m3u string
      * @var string
      */
@@ -44,6 +38,17 @@ class Telewizjada
      * @var bool
      */
     private $htmlOutputFormat = false;
+
+    /**
+     * Filter channels
+     * @var bool
+     */
+    private $onlineOnly = false;
+
+    /**
+     * @var bool
+     */
+    private $adultVisible = false;
 
     /**
      * Telewizjada constructor.
@@ -129,8 +134,8 @@ class Telewizjada
         $links = json_decode($this->getUrl('http://www.telewizjada.net/get_channels.php'), true);
 
         foreach ($links['channels'] as $link) {
-            //Skip offline channels if onlineOnly is true
-            if ($this->onlineOnly && !$link['online']) {
+            //Skip offline or adult channels if onlineOnly is true or if adultVisible is false
+            if (($this->onlineOnly && !$link['online']) || ($link['isAdult'] && !$this->adultVisible)) {
                 continue;
             }
 
@@ -177,6 +182,16 @@ class Telewizjada
     public function setOnlineOnly($onlineOnly)
     {
         $this->onlineOnly = $onlineOnly;
+
+        return $this;
+    }
+
+    /**
+     * @param boolean $adultVisible
+     */
+    public function setAdultVisible($adultVisible)
+    {
+        $this->adultVisible = $adultVisible;
 
         return $this;
     }
