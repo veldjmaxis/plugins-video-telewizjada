@@ -150,6 +150,15 @@ class Telewizjada
     }
 
     /**
+     * This function is just a redirect to epg service - for lazy people ;)
+     * @return mixed
+     */
+    public function getEPG()
+    {
+        return header("Location: $this->epgURL");
+    }
+    
+    /**
      * Sets html output format
      * @param bool $format
      * @return $this
@@ -159,15 +168,6 @@ class Telewizjada
         $this->htmlOutputFormat = $format;
 
         return $this;
-    }
-
-    /**
-     * This function is just a redirect to epg service - for lazy people ;)
-     * @return mixed
-     */
-    public function getEPG()
-    {
-        return header("Location: $this->epgURL");
     }
 
     /**
