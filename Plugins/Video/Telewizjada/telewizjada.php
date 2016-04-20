@@ -74,7 +74,7 @@ class Telewizjada
     public function getUrl($url, $postOptions = null, $sendHeader = false)
     {
 
-        //Code below is written by ... ??? WHO ???
+        //Code below is written by ... ??? WHO ??
         //regardless of this, I greet U
         //I made only minor refactoring
         $curl = curl_init($url);
