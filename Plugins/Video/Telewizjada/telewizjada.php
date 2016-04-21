@@ -124,7 +124,7 @@ class Telewizjada
         //We need to replace 'chunklist' with full url path
         return str_replace('chunklist', $urlForChunks . 'chunklist', $this->getUrl($channelUrl['url']));
     }
-
+    
     /**
      * Returns channels list
      * @return string

@@ -4,7 +4,7 @@
  */
 
 //Without autoloader
-include_once('Plugins/Video/Telewizjada/telewizjada.php');
+include_once('Plugins/Video/Telewizjada/Telewizjada.php');
 use djmaxis\Plugins\Video\Telewizjada\Telewizjada;
 
 /**
