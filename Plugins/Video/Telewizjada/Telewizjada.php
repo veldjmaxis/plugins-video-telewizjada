@@ -5,7 +5,6 @@
 
 namespace djmaxis\Plugins\Video\Telewizjada;
 
-
 /**
  * This class is written for objective use of code written by UNKNOWN.
  * I made some changes, fixes and code refactor.
@@ -121,10 +120,10 @@ class Telewizjada
         //We need to extract original URL to playlist, for later merge in chunklist
         $urlForChunks = explode('playlist.m3u8', $channelUrl['url'])[0];
 
-        //We need to replace 'chunklist' with full url path
+        //We need to replace 'chunklist' with full url path to chunklist
         return str_replace('chunklist', $urlForChunks . 'chunklist', $this->getUrl($channelUrl['url']));
     }
-    
+
     /**
      * Returns channels list
      * @return string
@@ -132,7 +131,7 @@ class Telewizjada
     public function getChannelsList()
     {
         $links = json_decode($this->getUrl('http://www.telewizjada.net/get_channels.php'), true);
-
+        
         foreach ($links['channels'] as $link) {
             //Skip offline or adult channels if onlineOnly is true or if adultVisible is false
             if (($this->onlineOnly && !$link['online']) || ($link['isAdult'] && !$this->adultVisible)) {
@@ -188,6 +187,7 @@ class Telewizjada
 
     /**
      * @param boolean $adultVisible
+     * @return $this
      */
     public function setAdultVisible($adultVisible)
     {
