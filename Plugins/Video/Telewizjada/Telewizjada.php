@@ -77,11 +77,13 @@ class Telewizjada
      */
     public function getUrl($url, $postOptions = null, $sendHeader = false)
     {
-
+        
         //Code below is written by ... ??? WHO ??
         //regardless of this, I greet U
         //I made only minor refactoring
         $curl = curl_init($url);
+        //Include HOST into header to force crossdomain policy
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Host: www.telewizjada.net'));
         curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
         curl_setopt($curl, CURLOPT_ENCODING, 'gzip, deflate');
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -91,7 +93,6 @@ class Telewizjada
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_COOKIEJAR, 'cookies.txt');
         curl_setopt($curl, CURLOPT_COOKIEFILE, 'cookies.txt');
-
         if ($postOptions !== null) {
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
             curl_setopt($curl, CURLOPT_POSTFIELDS, $postOptions);
