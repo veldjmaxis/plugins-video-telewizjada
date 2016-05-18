@@ -77,7 +77,7 @@ class Telewizjada
      */
     public function getUrl($url, $postOptions = null, $sendHeader = false)
     {
-        
+
         //Code below is written by ... ??? WHO ??
         //regardless of this, I greet U
         //I made only minor refactoring
@@ -111,18 +111,36 @@ class Telewizjada
      */
     public function getChannel($cid = 1)
     {
-        //Yeah, that below is written by UNKNOWN too
-        //I made only minor changes
-        $uri = json_decode($this->getUrl('http://www.telewizjada.net/get_mainchannel.php', "cid=$cid"), true);
-        $this->getUrl('http://www.telewizjada.net/set_cookie.php', "url={$uri['url']}", true);
-        $channelUrl = json_decode($this->getUrl('http://www.telewizjada.net/get_channel_url.php', "cid=$cid"), true);
+        try {
+            if (!$cid) {
+                throw new \HttpInvalidParamException('CID must be an integer value!');
+            }
+            //Yeah, that below is written by UNKNOWN too
+            //I made only minor changes
+            $uri = json_decode($this->getUrl('http://www.telewizjada.net/get_mainchannel.php', "cid=$cid"), true);
 
-        //Additional code containing URL fix
-        //We need to extract original URL to playlist, for later merge in chunklist
-        $urlForChunks = explode('playlist.m3u8', $channelUrl['url'])[0];
+            if (!is_array($uri)) {
+                throw new \UnexpectedValueException('Failed to get main channel!');
+            }
 
-        //We need to replace 'chunklist' with full url path to chunklist
-        return str_replace('chunklist', $urlForChunks . 'chunklist', $this->getUrl($channelUrl['url']));
+            $this->getUrl('http://www.telewizjada.net/set_cookie.php', "url={$uri['url']}", true);
+            $channelUrl = json_decode($this->getUrl('http://www.telewizjada.net/get_channel_url.php', "cid=$cid"), true);
+
+            if (!is_array($channelUrl)) {
+                throw new \UnexpectedValueException('Failed to get channel url!');
+            }
+
+            //Additional code containing URL fix
+            //We need to extract original URL to playlist, for later merge in chunklist
+            $urlForChunks = explode('playlist.m3u8', $channelUrl['url'])[0];
+
+            //We need to replace 'chunklist' with full url path to chunklist
+            return str_replace('chunklist', $urlForChunks . 'chunklist', $this->getUrl($channelUrl['url']));
+
+        } catch (\Exception $e) {
+            error_log($e);
+            return null;
+        }
     }
 
     /**
@@ -131,27 +149,37 @@ class Telewizjada
      */
     public function getChannelsList()
     {
-        $links = json_decode($this->getUrl('http://www.telewizjada.net/get_channels.php'), true);
-        
-        foreach ($links['channels'] as $link) {
-            //Skip offline or adult channels if onlineOnly is true or if adultVisible is false
-            if (($this->onlineOnly && !$link['online']) || ($link['isAdult'] && !$this->adultVisible)) {
-                continue;
+        try {
+            $links = json_decode($this->getUrl('http://www.telewizjada.net/get_channels.php'), true);
+
+            if (!is_array($links)) {
+                throw new \UnexpectedValueException('Failed to get channels!');
             }
 
-            $this->m3uString .= sprintf("#EXTINF:-1 tvg-id=\"%s\" group-title=\"Telewizjada\" tvg-logo=\"http://telewizjada.net%s\",%s\r\n%s?cid=%s\r\n\r\n",
-                $link['displayName'],
-                $link['thumb'],
-                $link['displayName'],
-                $this->webUrl,
-                $link['id']);
-        }
+            foreach ($links['channels'] as $link) {
+                //Skip offline or adult channels if onlineOnly is true or if adultVisible is false
+                if (($this->onlineOnly && !$link['online']) || ($link['isAdult'] && !$this->adultVisible)) {
+                    continue;
+                }
 
-        if ($this->htmlOutputFormat) {
-            $this->m3uString = nl2br($this->m3uString);
-        }
+                $this->m3uString .= sprintf("#EXTINF:-1 tvg-id=\"%s\" group-title=\"Telewizjada\" tvg-logo=\"http://telewizjada.net%s\",%s\r\n%s?cid=%s\r\n\r\n",
+                    $link['displayName'],
+                    $link['thumb'],
+                    $link['displayName'],
+                    $this->webUrl,
+                    $link['id']);
+            }
 
-        return $this->m3uString;
+            if ($this->htmlOutputFormat) {
+                $this->m3uString = nl2br($this->m3uString);
+            }
+
+            return $this->m3uString;
+
+        } catch (\Exception $e) {
+            error_log($e);
+            return null;
+        }
     }
 
     /**
@@ -162,7 +190,7 @@ class Telewizjada
     {
         return header("Location: $this->epgURL");
     }
-    
+
     /**
      * Sets html output format
      * @param bool $format
